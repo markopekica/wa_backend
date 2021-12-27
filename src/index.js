@@ -12,8 +12,14 @@ const port = 3000 // port na kojem će web server slušati
 
 app.get('/', (req, res) => res.send('uh'))
 
+// aktivnosti
 app.get('/activities', (req, res) => {
     res.json(storage.activities)
+})
+app.post('/activities', (req, res) => {
+    res.statusCode = 201
+    res.setHeader('Location', '/activities/staJaToRadim')
+    res.send()
 })
 
 app.get('/sessions', (req, res) => {

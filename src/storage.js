@@ -92,20 +92,12 @@ export default {
       id: "2",
       name: "Bjj",
       addedAt: "1.1.2020.",
-      color: "purple",
-      /* session: [
-        {
-          date: "16.12.2021.",
-          time: "16:46",
-          minutes: 90,
-          isRest: false,
-        },
-      ], */
+      color: "rgba(71, 183,132,.5)",
     },
     {
       name: 'running',
       addedAt: '1.1.2021.',
-      color: 'pink'
+      color: "#32g724"
     },
   ],
   sessions: [
