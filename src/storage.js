@@ -81,7 +81,11 @@
   ]
 } */
 
-export default {
+
+
+
+
+/* export default {
   activities: [
     {
       name: 'JS',
@@ -144,4 +148,4 @@ export default {
       isRest: false
     }
   ]
-}
+} */
