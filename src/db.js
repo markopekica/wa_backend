@@ -22,7 +22,7 @@ let db = null
 export default () => {
   return new Promise((resolve, reject) => {
 
-    if (db /* && client.isConnected() */) {
+    if (db) {
         resolve(db)
     }
 
@@ -34,7 +34,6 @@ export default () => {
         else {
             console.log('Uspjesno spajanje')
             db = client.db("baza")
-            /* console.log("db: ", db) */
             resolve(db)
         }
       })
