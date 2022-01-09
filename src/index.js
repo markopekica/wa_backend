@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import connect from "./db.js";
+import auth from './auth.js'
 
 const app = express(); // instanciranje aplikacije
 const port = 3000; // port na kojem će web server slušati
@@ -10,11 +11,27 @@ app.use(express.json());
 
 app.get("/", (req, res) => res.send("uh"));
 
+app.post('/users', async (req, res) => {
+    let user = req.body
+
+    let id 
+
+    try{
+
+        id = await auth.registerUser(user)
+        
+    }
+    catch( e ){
+        res.status(500).json({ error: e.message })
+    }
+
+    res.json({ id: id })
+
+})
+
 // aktivnosti
 app.get("/activities", async (req, res) => {
-    /* res.json(storage.activities) */
     let db = await connect();
-
     let cursor = await db.collection("activities").find();
     let results = await cursor.toArray();
     res.json(results);
@@ -26,14 +43,11 @@ app.post("/activities", async (req, res) => {
     delete activity._id;
     activity.addedAt = new Date().getTime();
 
-    /* console.log("activity: ", activity); */
-
     let db = await connect();
     let cursor = await db.collection("activities").find();
     let flag = null
 
     await cursor.forEach((el) => {
-        /* console.log(el.name == activity.name); */
         if (el.name == activity.name) {
             flag = true
             res.json({
@@ -53,11 +67,9 @@ app.post("/activities", async (req, res) => {
         }
     }
     
-    /* res.json(result) */
 });
 // sessions
 app.get("/sessions", async (req, res) => {
-    /* res.json(storage.sessions) */
     let db = await connect();
     let cursor = await db.collection("sessions").find();
     let results = await cursor.toArray();
@@ -80,10 +92,6 @@ app.post("/sessions", async (req, res) => {
         res.json({status: 'failed'})
     }
 
-    /* console.log(session) */
-
-
-    /* res.json("ok"); */
 });
 
 app.listen(port, () => console.log(`Slušam na portu ${port}!`));
