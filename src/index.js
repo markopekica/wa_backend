@@ -18,7 +18,11 @@ app.get("/", (req, res) => res.send("!"));
 
 app.post('/users', async (req, res) => {
     let user = req.body
-    let id 
+    let id
+    console.log(user)
+    if( user.password != user.repeatPassword ){
+        res.status().json("error")
+    }
     try{
         id = await auth.registerUser(user)
     }
@@ -39,11 +43,11 @@ app.post("/auth", async (req, res) => {
     }
 })
 
-app.get("/tajna", [auth.verify], (req, res) => {
+/* app.get("/tajna", [auth.verify], (req, res) => {
 
     res.json({ message: "ovo je tajna" + req.jwt.username })
 
-})
+}) */
 
 
 // aktivnosti
