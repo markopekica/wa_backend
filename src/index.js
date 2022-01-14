@@ -1,3 +1,6 @@
+import dotenv from "dotenv"
+dotenv.config( )
+
 import express from "express";
 import cors from "cors";
 import connect from "./db.js";
@@ -9,28 +12,42 @@ const port = 3000; // port na kojem će web server slušati
 app.use(cors()); // bit ce koristen na svim rutama
 app.use(express.json());
 
-app.get("/", (req, res) => res.send("uh"));
+app.get("/", (req, res) => res.send("!"));
+
+
 
 app.post('/users', async (req, res) => {
     let user = req.body
-
     let id 
-
     try{
-
         id = await auth.registerUser(user)
-        
     }
     catch( e ){
         res.status(500).json({ error: e.message })
     }
-
     res.json({ id: id })
+})
+
+app.post("/auth", async (req, res) => {
+    let user = req.body
+    
+    try{
+        let result = await auth.authenticateUser(user.username, user.password)
+        res.json( result )
+    } catch( e ){
+        res.status(403).json({ error: e.message })
+    }
+})
+
+app.get("/tajna", [auth.verify], (req, res) => {
+
+    res.json({ message: "ovo je tajna" + req.jwt.username })
 
 })
 
+
 // aktivnosti
-app.get("/activities", async (req, res) => {
+app.get("/activities", [auth.verify], async (req, res) => {
     let db = await connect();
     let cursor = await db.collection("activities").find();
     let results = await cursor.toArray();
