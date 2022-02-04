@@ -69,7 +69,7 @@ app.post("/activities", async (req, res) => {
     let flag = null
 
     await cursor.forEach((el) => {
-        if (el.name == activity.name) {
+        if (el.name == activity.name && el.userName == activity.userName) {
             flag = true
             res.json({
                 status: "that activity already exists",
@@ -79,7 +79,7 @@ app.post("/activities", async (req, res) => {
 
     if( !flag ){
         let result = await db.collection("activities").insertOne(activity);
-        if (result /* && result.insertedCount == 1 */) {
+        if (result) {
             res.json(result);
         } else {
             res.json({
