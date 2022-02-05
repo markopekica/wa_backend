@@ -1,7 +1,6 @@
 let mongo = require("mongodb");
 
-let connectionString =
-  "mongodb+srv://user:user@cluster0.utkpv.mongodb.net/baza?retryWrites=true&w=majority";
+let connectionString = process.env.CONNECTION_STRING
 
 // https://stackoverflow.com/questions/41638499/mongodb-returns-undefined
 
