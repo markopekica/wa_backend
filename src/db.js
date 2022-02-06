@@ -1,4 +1,6 @@
-let mongo = require("mongodb");
+/* let mongo = require("mongodb"); */
+
+import mongo from "mongodb"
 
 let connectionString = process.env.CONNECTION_STRING
 
