@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "build": "babel src -d build",
     "start": "node src/index.js",
@@ -12,8 +13,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-  "type": "module",
-
     "bcrypt": "^5.0.1",
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
