@@ -12,7 +12,9 @@ const port = 3000; // port na kojem će web server slušati
 app.use(cors()); // bit ce koristen na svim rutama
 app.use(express.json());
 
+
 app.get("/", (req, res) => res.send("!"));
+
 
 app.post("/users", async (req, res) => {
   let user = req.body;
@@ -39,6 +41,7 @@ app.post("/auth", async (req, res) => {
     res.status(403).json({ error: e.message });
   }
 });
+
 
 // aktivnosti
 app.get("/activities", [auth.verify], async (req, res) => {
@@ -78,6 +81,47 @@ app.post("/activities", async (req, res) => {
   }
 });
 
+
+// tasks
+app.get('/tasks', [auth.verify], async (req, res) => {
+  let db = await connect()
+  let cursor = await db.collection('tasks').find()
+  let results = await cursor.toArray()
+  res.json(results)
+})
+app.post('/tasks', async(req, res) => {
+
+  let task = await req.body
+  delete task._id
+  task.addedAt = new Date().getTime()
+
+  let db = await connect()
+  let cursor = await db.collection('tasks').find()
+  let flag = null
+
+  await cursor.forEach( (e) => {
+    if(e.name == task.name && e.userName == task.userName) {
+      flag = true
+      res.json({
+        status: `task name: ${e.name} already exists`
+      })
+    }
+  })
+
+  if( !flag ){
+    let result = await db.collection('tasks').insertOne(task)
+    if( result ){
+      res.json(result)
+    } else {
+      res.json({
+        status: 'fail'
+      })
+    }
+  }
+
+})
+
+
 // sessions
 app.get("/sessions", async (req, res) => {
   let db = await connect();
@@ -101,5 +145,6 @@ app.post("/sessions", async (req, res) => {
     res.json({ status: "failed" });
   }
 });
+
 
 app.listen(port, () => console.log(`Slušam na portu ${port}!`));
