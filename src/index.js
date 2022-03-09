@@ -115,7 +115,28 @@ app.post("/tasks", async (req, res) => {
     }
   }
 });
-app.put("/task/:id", async (req, res) => {
+app.patch('/task/:id', async (req, res) => {
+
+  let id = req.params.id
+  let data = req.body
+  delete data._id
+
+  let db = await connect()
+
+  let result = db.collection('tasks').updateOne({_id: mongo.ObjectId(id)}, 
+    {
+      $set: data
+    }
+  )
+  if (result && result.modifiedCount == 1) {
+    res.json({ status: "success" });
+  } else {
+    res.json({
+      status: "fail",
+    });
+  }
+})
+/* app.put("/task/:id", async (req, res) => {
   let id = req.params.id;
   let data = req.body;
 
@@ -131,7 +152,7 @@ app.put("/task/:id", async (req, res) => {
       status: "fail",
     });
   }
-});
+}); */
 
 // sessions
 app.get("/sessions", async (req, res) => {
