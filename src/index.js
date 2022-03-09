@@ -78,6 +78,24 @@ app.post("/activities", async (req, res) => {
     }
   }
 });
+app.delete('/activities/:id', async( req, res ) => {
+  
+  let id = req.params
+  let d = req.body
+    console.log("id: ", id)
+
+
+  let db = await connect()
+
+    let result = db.collection('activities').deleteOne({_id: mongo.ObjectId(id)})
+  if (result) {
+    res.json({ status: "success" });
+  } else {
+    res.json({
+      status: "fail",
+    });
+  }
+})
 
 // tasks
 app.get("/tasks", [auth.verify], async (req, res) => {
