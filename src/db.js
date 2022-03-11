@@ -1,9 +1,10 @@
 let mongo = require("mongodb");
+// https://stackoverflow.com/questions/41638499/mongodb-returns-undefined
+
 
 let connectionString =
   "mongodb+srv://user:user@cluster0.utkpv.mongodb.net/baza?retryWrites=true&w=majority";
 
-// https://stackoverflow.com/questions/41638499/mongodb-returns-undefined
 
 let client = new mongo.MongoClient(connectionString, {
   useNewUrlParser: true,
