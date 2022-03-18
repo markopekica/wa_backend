@@ -133,6 +133,22 @@ app.post("/tasks", async (req, res) => {
     }
   }
 });
+app.post("/taskSessions", async(req, res) => {
+  let taskSession = await req.body;
+  delete taskSession._id
+  taskSession.date = new Date();
+  
+  let db = await connect()
+
+  let result = await db.collection("taskSessions").insertOne(taskSession);
+
+  if (result) {
+    res.json(result);
+  } else {
+    res.json({ status: "failed" });
+  }
+
+})
 app.patch('/task/:id', async (req, res) => {
 
   let id = req.params.id
@@ -183,7 +199,7 @@ app.post("/sessions", async (req, res) => {
   let session = await req.body;
 
   session.date = new Date();
-  session.startedAt = new Date().getTime();
+  /* session.startedAt = new Date().getTime(); */
 
   let db = await connect();
 
