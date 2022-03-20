@@ -212,4 +212,52 @@ app.post("/sessions", async (req, res) => {
   }
 });
 
+
+app.get("/options", async (req, res) => {
+  let db = await connect( )
+  let cursor = await db.collection("options").find()
+  let results = await cursor.toArray()
+  res.json(results)
+})
+app.post("/options", async (req, res) => {
+
+  let options = await req.body;
+
+  let db = await connect()
+
+  let result = await db.collection("options").insertOne(options)
+
+  if (result) {
+    res.json(result);
+  } else {
+    res.json({ status: "failed" });
+  }
+
+})
+app.patch('/options/:id', async(req, res) => {
+  
+  let id = req.params.id
+  let data = await req.body
+  delete data._id
+  let db = await connect()
+
+  let result = db.collection('options').updateOne({_id: mongo.ObjectId(id)},
+  {
+    $set: data
+  })
+
+  if (result /* && result.modifiedCount == 1 */) {
+    res.json({ status: "success" });
+  } else {
+    res.json({
+      status: "fail",
+    });
+  }
+
+})
+
+
+
+
+
 app.listen(port, () => console.log(`Slušam na portu ${port}!`));
