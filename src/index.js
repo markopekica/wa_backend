@@ -149,6 +149,12 @@ app.post("/taskSessions", async(req, res) => {
   }
 
 })
+app.get('/taskSessions', async( req, res ) => {
+  let db = await connect();
+  let cursor = await db.collection("taskSessions").find();
+  let results = await cursor.toArray();
+  res.json(results);
+})
 app.patch('/task/:id', async (req, res) => {
 
   let id = req.params.id
