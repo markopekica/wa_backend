@@ -5,7 +5,6 @@ import jwt from "jsonwebtoken";
 
 (async () => {
   let db = await connect();
-
   await db.collection("users").createIndex({ username: 1 }, { unique: true });
 })();
 
@@ -16,7 +15,6 @@ export default {
       username: userData.username,
       password: await bcrypt.hash(userData.password, 8),
     };
-
     try {
       let result = await db.collection("users").insertOne(doc);
       if (result && result.insertedId) {
@@ -33,7 +31,6 @@ export default {
   async authenticateUser(username, password) {
     let db = await connect();
     let user = await db.collection("users").findOne({ username: username });
-
     if (
       user &&
       user.password &&
@@ -44,7 +41,6 @@ export default {
         algorithm: "HS512",
         expiresIn: "1 week",
       });
-
       return {
         token,
         username: user.username,

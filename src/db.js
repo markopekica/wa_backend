@@ -1,10 +1,10 @@
-/* let mongo = require("mongodb"); */
-
-import mongo from "mongodb"
-
-let connectionString = process.env.CONNECTION_STRING
-
+let mongo = require("mongodb");
 // https://stackoverflow.com/questions/41638499/mongodb-returns-undefined
+
+
+let connectionString = process.env.CONNECTION_STRING;
+  /* "mongodb+srv://user:user@cluster0.utkpv.mongodb.net/baza?retryWrites=true&w=majority"; */
+
 
 let client = new mongo.MongoClient(connectionString, {
   useNewUrlParser: true,
