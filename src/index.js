@@ -7,10 +7,10 @@ import connect from "./db.js";
 import auth from "./auth.js";
 let mongo = require("mongodb");
 
-const app = express(); // instanciranje aplikacije
-const port = 3000; // port na kojem će web server slušati
+const app = express();
+const port = 3000;
 
-app.use(cors()); // bit ce koristen na svim rutama
+app.use(cors());
 app.use(express.json());
 
 app.get("/", (req, res) => res.send("!"));
@@ -18,7 +18,6 @@ app.get("/", (req, res) => res.send("!"));
 app.post("/users", async (req, res) => {
   let user = req.body;
   let id;
-  console.log(user);
   if (user.password != user.repeatPassword) {
     res.status().json("error");
   }
@@ -32,7 +31,6 @@ app.post("/users", async (req, res) => {
 
 app.post("/auth", async (req, res) => {
   let user = req.body;
-
   try {
     let result = await auth.authenticateUser(user.username, user.password);
     res.json(result);
@@ -78,16 +76,15 @@ app.post("/activities", async (req, res) => {
     }
   }
 });
-app.delete('/activities/:id', async( req, res ) => {
-  
-  let id = req.params
-  let d = req.body
-    console.log("id: ", id)
+app.delete("/activities/:id", async (req, res) => {
+  /* let d = req.body */
+  let id = req.params;
+  let db = await connect();
 
+  let result = db
+    .collection("activities")
+    .deleteOne({ _id: mongo.ObjectId(id) });
 
-  let db = await connect()
-
-    let result = db.collection('activities').deleteOne({_id: mongo.ObjectId(id)})
   if (result) {
     res.json({ status: "success" });
   } else {
@@ -95,7 +92,7 @@ app.delete('/activities/:id', async( req, res ) => {
       status: "fail",
     });
   }
-})
+});
 
 // tasks
 app.get("/tasks", [auth.verify], async (req, res) => {
@@ -133,12 +130,12 @@ app.post("/tasks", async (req, res) => {
     }
   }
 });
-app.post("/taskSessions", async(req, res) => {
+app.post("/taskSessions", async (req, res) => {
   let taskSession = await req.body;
-  delete taskSession._id
+  delete taskSession._id;
   taskSession.date = new Date();
-  
-  let db = await connect()
+
+  let db = await connect();
 
   let result = await db.collection("taskSessions").insertOne(taskSession);
 
@@ -147,27 +144,26 @@ app.post("/taskSessions", async(req, res) => {
   } else {
     res.json({ status: "failed" });
   }
-
-})
-app.get('/taskSessions', async( req, res ) => {
+});
+app.get("/taskSessions", async (req, res) => {
   let db = await connect();
   let cursor = await db.collection("taskSessions").find();
   let results = await cursor.toArray();
   res.json(results);
-})
-app.patch('/task/:id', async (req, res) => {
+});
+app.patch("/task/:id", async (req, res) => {
+  let id = req.params.id;
+  let data = req.body;
+  delete data._id;
 
-  let id = req.params.id
-  let data = req.body
-  delete data._id
+  let db = await connect();
 
-  let db = await connect()
-
-  let result = db.collection('tasks').updateOne({_id: mongo.ObjectId(id)}, 
+  let result = db.collection("tasks").updateOne(
+    { _id: mongo.ObjectId(id) },
     {
-      $set: data
+      $set: data,
     }
-  )
+  );
   if (result && result.modifiedCount == 1) {
     res.json({ status: "success" });
   } else {
@@ -175,7 +171,7 @@ app.patch('/task/:id', async (req, res) => {
       status: "fail",
     });
   }
-})
+});
 /* app.put("/task/:id", async (req, res) => {
   let id = req.params.id;
   let data = req.body;
@@ -205,7 +201,6 @@ app.post("/sessions", async (req, res) => {
   let session = await req.body;
 
   session.date = new Date();
-  /* session.startedAt = new Date().getTime(); */
 
   let db = await connect();
 
@@ -218,52 +213,45 @@ app.post("/sessions", async (req, res) => {
   }
 });
 
-
 app.get("/options", async (req, res) => {
-  let db = await connect( )
-  let cursor = await db.collection("options").find()
-  let results = await cursor.toArray()
-  res.json(results)
-})
+  let db = await connect();
+  let cursor = await db.collection("options").find();
+  let results = await cursor.toArray();
+  res.json(results);
+});
 app.post("/options", async (req, res) => {
-
   let options = await req.body;
 
-  let db = await connect()
+  let db = await connect();
 
-  let result = await db.collection("options").insertOne(options)
+  let result = await db.collection("options").insertOne(options);
 
   if (result) {
     res.json(result);
   } else {
     res.json({ status: "failed" });
   }
+});
+app.patch("/options/:id", async (req, res) => {
+  let id = req.params.id;
+  let data = await req.body;
+  delete data._id;
+  let db = await connect();
 
-})
-app.patch('/options/:id', async(req, res) => {
-  
-  let id = req.params.id
-  let data = await req.body
-  delete data._id
-  let db = await connect()
+  let result = db.collection("options").updateOne(
+    { _id: mongo.ObjectId(id) },
+    {
+      $set: data,
+    }
+  );
 
-  let result = db.collection('options').updateOne({_id: mongo.ObjectId(id)},
-  {
-    $set: data
-  })
-
-  if (result /* && result.modifiedCount == 1 */) {
+  if (result) {
     res.json({ status: "success" });
   } else {
     res.json({
       status: "fail",
     });
   }
-
-})
-
-
-
-
+});
 
 app.listen(port, () => console.log(`Slušam na portu ${port}!`));
